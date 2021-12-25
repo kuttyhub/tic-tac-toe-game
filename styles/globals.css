@@ -14,6 +14,16 @@ a {
 * {
   box-sizing: border-box;
 }
+.alert {
+  padding: 1rem 2rem;
+  background-color: antiquewhite;
+  color: #000;
+  border-radius: 0.5rem;
+  position: absolute;
+  margin: 1rem 2rem;
+  top: 0;
+  right: 0;
+}
 
 @tailwind base;
 @tailwind components;
