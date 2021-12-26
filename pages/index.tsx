@@ -4,20 +4,23 @@ import { setTimeout } from "timers";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
+  const [arraySize, setArraySize] = useState(3);
   const [data, setdata] = useState<(null | string)[][]>(
-    Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => null))
+    Array.from({ length: arraySize }, () =>
+      Array.from({ length: arraySize }, () => null)
+    )
   );
+
   const [isMychance, setisMychance] = useState(true);
   const [isGameStarted, setisGameStarted] = useState(false);
-  const [moveCount, setmoveCount] = useState(9);
+  const [moveCount, setmoveCount] = useState(arraySize * arraySize);
   const [alertVisible, setalertVisible] = useState(false);
   const [alterText, setalterText] = useState("");
 
   const handleClick = (i: any, j: any) => {
-    setmoveCount(moveCount - 1);
-
     if (isGameStarted) {
       if (!data[i][j]) {
+        setmoveCount(moveCount - 1);
         var player = isMychance ? "O" : "X";
         let temp = [...data];
         temp[i][j] = player;
@@ -25,79 +28,94 @@ const Home: NextPage = () => {
         var res = checkWinner(i, j, player);
         console.log(res);
         if (res == 1) {
-          // alert(player + " Player Wins!");
-          showAlterVisible(player + " Player Wins!");
+          showAlertPopup(player + " Player Wins!");
           setTimeout(() => resetGame(), 3000);
         } else if (res == 0) {
-          // alert("Game Tied");
-          showAlterVisible("Game Tied");
-          resetGame();
+          showAlertPopup("Game Tied");
+          setTimeout(() => resetGame(), 3000);
         }
         setisMychance(!isMychance);
+      } else {
+        showAlertPopup("already filled");
       }
     } else {
-      !isGameStarted ? alert("please start the game") : alert("already filled");
-    }
-    if (moveCount === 0) {
-      // alert("game ended");
-      showAlterVisible("Game Ended");
-      setTimeout(() => resetGame(), 3000);
-    }
-    // console.log(data);
+      showAlertPopup("please start the game");
+    } // console.log(data);
   };
-  const showAlterVisible = (text: string) => {
+  const showAlertPopup = (text: string) => {
     setalertVisible(true);
     setalterText(text);
     setTimeout(() => setalertVisible(false), 3000);
   };
   const resetGame = () => {
     setisGameStarted(false);
-    setmoveCount(9);
+    setmoveCount(arraySize * arraySize);
     setdata(
-      Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => null))
+      Array.from({ length: arraySize }, () =>
+        Array.from({ length: arraySize }, () => null)
+      )
     );
     setisMychance(true);
   };
 
   const checkWinner = (iIdx: any, jIdx: any, player: string) => {
     //horizontal
-    if (
-      data[0][jIdx] === player &&
-      data[1][jIdx] === player &&
-      data[2][jIdx] === player
-    ) {
+    var flag = true;
+    for (var i = 0; i < arraySize; i++) {
+      if (data[i][jIdx] !== player) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) {
       return 1;
     }
-    //vertical
-    if (
-      data[iIdx][0] == player &&
-      data[iIdx][1] == player &&
-      data[iIdx][2] == player
-    ) {
+
+    flag = true;
+    for (var i = 0; i < arraySize; i++) {
+      if (data[iIdx][i] !== player) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) {
       return 1;
     }
-    //idagonal
-    if (iIdx == jIdx) {
-      if (
-        data[0][0] == player &&
-        data[1][1] == player &&
-        data[2][2] == player
-      ) {
+    //diagonal
+    if (iIdx === jIdx || iIdx === arraySize - jIdx - 1) {
+      flag = true;
+      for (var i = 0; i < arraySize; i++) {
+        if (data[i][i] !== player) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag) {
+        return 1;
+      }
+      flag = true;
+      for (var i = 0; i < arraySize; i++) {
+        if (data[i][arraySize - i - 1] !== player) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag) {
         return 1;
       }
     }
 
-    return moveCount === 0 ? 0 : -1;
+    return moveCount === 1 ? 0 : -1;
   };
 
   const startGame = () => {
     setisGameStarted(true);
   };
   return (
-    <div className=" text-center p-24">
-      <h1 className="text-5xl">tic-tac-toe</h1>
-      <div className="mx-auto my-5 flex-col">
-        <h1>Current playing : {isMychance ? "you" : "apponent"}</h1>
+    <div className="min-h-screen flex bg-slate-900 text-center text-white ">
+      <div className="min-h-full w-1/4 bg-gray-900 flex flex-col items-center justify-center py-8 ">
+        <h1 className="my-5 text-5xl ">tic-tac-toe</h1>
+        <h1 className="my-5">Current Trun : {isMychance ? "O" : "X"}</h1>
         <button
           className="py-3 px-10 rounded-lg mt-3 text-white bg-green-400 disabled:cursor-not-allowed disabled:bg-red-400 disabled:opacity-75"
           disabled={isGameStarted ? true : false}
@@ -105,17 +123,39 @@ const Home: NextPage = () => {
         >
           Start
         </button>
+        <select
+          className="w-28 m-10 text-black"
+          onChange={(e: any) => {
+            if (!isGameStarted) {
+              var size = parseInt(e.target.value);
+              setArraySize(size);
+              setdata(
+                Array.from({ length: size }, () =>
+                  Array.from({ length: size }, () => null)
+                )
+              );
+              setmoveCount(size * size);
+            } else {
+              showAlertPopup("Please finish the game to change Board");
+            }
+          }}
+        >
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
       </div>
-      <div className="mx-auto my-10 max-w-min bg-slate-100 rounded-md p-10">
+      <div className="m-auto bg-slate-100 rounded-md p-10">
         {data.map((ele: any, i: any) => (
-          <div className="flex " key={i}>
+          <div className="flex" key={i}>
             {ele.map((elej: any, j: any) => (
               <div
                 key={i + j}
-                className="h-24 w-24 border-2 border-zinc-500 flex items-center justify-center cursor-pointer"
+                className="h-24 w-24 border border-zinc-500 flex items-center justify-center cursor-pointer"
                 onClick={() => handleClick(i, j)}
               >
-                <h2 className="text-3xl">{elej}</h2>
+                <h2 className="text-3xl text-black">{elej}</h2>
               </div>
             ))}
           </div>
