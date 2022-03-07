@@ -1,17 +1,29 @@
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import { FormEvent, MouseEvent, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import { userAtom, UserInterface } from "../atom/userAtom";
 import styles from "../styles/Home.module.css";
 
 const HomePage: NextPage = () => {
   const [popupVisiblity, setPopupVisiblity] = useState(false);
+  const router = useRouter();
   const handleClick = (value: boolean) => {
     setPopupVisiblity(value);
   };
+  const setUserData = useSetRecoilState(userAtom);
+
   const handleFormSubmit = (e: any) => {
     e.preventDefault();
-    console.log(e.target[0].name);
-    console.log(e.target[1].name);
+    var data: UserInterface = {
+      name: e.target[0].value,
+      boradPreference: e.target[1].value,
+    };
+    setUserData(data);
+
+    router.push("/playground");
   };
+
   return (
     <div className={styles.container}>
       <h2>Play Tic-Tac-Toe Game with around the world</h2>
