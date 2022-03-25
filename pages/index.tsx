@@ -1,27 +1,45 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FormEvent, MouseEvent, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { MouseEvent, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { gameAtom, PlaygroundInterface } from "../atom/gameAtom";
 import { userAtom, UserInterface } from "../atom/userAtom";
+import { xPlayerSymbol, yPlayerSymbol } from "../constants/constants";
 import styles from "../styles/Home.module.css";
 
 const HomePage: NextPage = () => {
   const [popupVisiblity, setPopupVisiblity] = useState(false);
   const router = useRouter();
+  const [userData, setUserData] = useRecoilState(userAtom);
+  const setGameState = useSetRecoilState(gameAtom);
+
   const handleClick = (value: boolean) => {
     setPopupVisiblity(value);
   };
-  const setUserData = useSetRecoilState(userAtom);
 
   const handleFormSubmit = (e: any) => {
     e.preventDefault();
     var data: UserInterface = {
       name: e.target[0].value,
-      boradPreference: e.target[1].value,
+      boradPreference: Number(e.target[1].value),
     };
     setUserData(data);
+    var state = getGameState(Number(e.target[1].value));
+    console.log(state);
+    setGameState(state);
 
     router.push("/playground");
+  };
+
+  const getGameState = (boradPreference: number) => {
+    var array = Array.from({ length: boradPreference }, () =>
+      Array.from({ length: boradPreference }, () => null)
+    );
+    var currentuser = Math.random() % 2 == 0 ? xPlayerSymbol : yPlayerSymbol;
+    return {
+      currentPlayer: currentuser,
+      boardArray: array,
+    };
   };
 
   return (

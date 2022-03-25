@@ -6,7 +6,7 @@ export interface UserInterface {
 }
 
 export const userAtom = atom<UserInterface>({
-  key: "user",
+  key: "userState",
   default: {
     name: "",
     boradPreference: 0,
