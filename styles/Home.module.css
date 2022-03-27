@@ -10,6 +10,8 @@
 }
 .container h2 {
   color: #84cc16;
+  max-width: 30vw;
+  text-align: center;
   font-size: xx-large;
   margin-bottom: 1rem;
 }
@@ -33,6 +35,8 @@
 
 .popup {
   display: flex;
+  width: 40vw;
+  min-height: 55vh;
   flex-direction: column;
   align-items: center;
   padding: 1rem 3rem;
@@ -43,6 +47,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
 }
 .popup h3 {
   margin-bottom: 2rem;
@@ -76,4 +81,61 @@
   width: 100vw;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.swapButtons {
+  display: flex;
+}
+.swapButtons h3 {
+  position: relative;
+  margin: 1rem;
+  font-weight: 500;
+  color: gray;
+  transition: all 0.3s ease;
+  padding-bottom: 1rem;
+  border-bottom: 0.1rem solid transparent;
+  cursor: pointer;
+}
+.swapButtons h3:hover {
+  color: white;
+}
+
+.active {
+  font-weight: bold;
+  color: #84cc16 !important;
+  border-bottom: 0.1rem solid #84cc16 !important;
+}
+.joinroom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.roomtype {
+  display: flex;
+}
+.roomtype p {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  color: gray;
+  border: 0.1rem solid gray;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.roomtype p:hover {
+  color: white;
+  border-color: white;
+}
+.typeActive {
+  background-color: #84cc16;
+  color: #121c2b !important;
+  border-color: #84cc16 !important;
+}
+.warning {
+  text-align: center;
+  width: 35rem;
+  margin-top: 1rem;
+  color: rgb(221, 0, 0);
 }
