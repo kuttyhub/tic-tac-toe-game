@@ -1,13 +1,20 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { uuid } from "uuidv4";
+import { v4 as uuid_v4 } from "uuid";
 
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { gameAtom } from "../atom/gameAtom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { gameAtom, PlaygroundInterface } from "../atom/gameAtom";
 import { userAtom, UserInterface } from "../atom/userAtom";
-import { xPlayerSymbol, yPlayerSymbol } from "../constants/constants";
+import {
+  privateState,
+  publicState,
+  xPlayerSymbol,
+  yPlayerSymbol,
+} from "../constants/constants";
 
 import styles from "../styles/Home.module.css";
+import { socketAtom } from "../atom/socketAtom";
+import { joinGameRoom, joinGameState } from "../services/gameService";
 
 const PopupForm = () => {
   const [isCreateRoomform, setisCreateRoomform] = useState(true);
@@ -16,37 +23,69 @@ const PopupForm = () => {
   const setUserData = useSetRecoilState(userAtom);
   const setGameState = useSetRecoilState(gameAtom);
 
-  const createRoom = (e: any) => {
+  const socket = useRecoilValue(socketAtom);
+
+  const createRoom = async (e: any) => {
     e.preventDefault();
+
     var data: UserInterface = {
       name: e.target[0].value,
       boradPreference: Number(e.target[1].value),
     };
+
+    var roomid = data.boradPreference.toString() + "_" + uuid_v4().slice(0, 5);
+
+    //TODO: join room based on public and private
+
+    try {
+      var joinState: joinGameState | void = await joinGameRoom(socket!, roomid);
+      setStates(data, joinState, roomid);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const setStates = (
+    data: UserInterface,
+    joinState: joinGameState,
+    roomid: string
+  ) => {
     setUserData(data);
-    var state = getGameState(Number(e.target[1].value));
-    console.log(state);
+    var array = Array.from({ length: data.boradPreference }, () =>
+      Array.from({ length: data.boradPreference }, () => null)
+    );
+    var state: PlaygroundInterface = {
+      roomid: roomid,
+      roomtype: isPublicType ? publicState : privateState,
+      currentPlayerSymbol: joinState.isFirstPlayer
+        ? xPlayerSymbol
+        : yPlayerSymbol,
+      boardArray: array,
+      isGameStarted: joinState.gameStarted,
+      isfirstPlayer: joinState.isFirstPlayer,
+    };
+    console.log("game state ->", state);
     setGameState(state);
 
     router.replace("/playground");
   };
 
-  const getGameState = (boradPreference: number) => {
-    var array = Array.from({ length: boradPreference }, () =>
-      Array.from({ length: boradPreference }, () => null)
-    );
-    var currentuser = Math.random() % 2 == 0 ? xPlayerSymbol : yPlayerSymbol;
-    var roomid = boradPreference.toString() + "_" + uuid().slice(0, 5);
-    return {
-      roomid: roomid,
-      roomtype: isPublicType ? "Public" : "Private",
-      currentPlayerSymbol: currentuser,
-      boardArray: array,
-    };
-  };
-
-  const joinRoomWithId = (e: any) => {
+  const joinRoomWithId = async (e: any) => {
     e.preventDefault();
-    var roomid = e.target[0].value;
+    var name = e.target[0].value;
+    var roomid: string = e.target[1].value;
+    var boardPreference = Number(roomid.split("_")[0]);
+    var data: UserInterface = {
+      name: name,
+      boradPreference: boardPreference,
+    };
+
+    try {
+      var joinState: joinGameState = await joinGameRoom(socket!, roomid);
+      setStates(data, joinState, roomid);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const canConnectToRoom = (id: string) => {
@@ -110,7 +149,9 @@ const PopupForm = () => {
         </div>
       ) : (
         <div>
-          <form action="" onSubmit={() => {}} className={styles.joinroom}>
+          <form action="" onSubmit={joinRoomWithId} className={styles.joinroom}>
+            <label htmlFor="">Enter your Name:</label>
+            <input required type="text" placeholder="Name" />
             <label htmlFor="">Enter your Room id</label>
             <input required type="text" placeholder="room id" />
             <button type="submit">Join</button>

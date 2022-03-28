@@ -1,13 +1,29 @@
 import { NextPage } from "next";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { socketAtom } from "../atom/socketAtom";
+import SocketService from "../services/socketService";
 import styles from "../styles/Home.module.css";
 import PopupForm from "./popupForm";
 
 const HomePage: NextPage = () => {
   const [popupVisiblity, setPopupVisiblity] = useState(false);
-
+  const [socketState, setSocketState] = useRecoilState(socketAtom);
   const handleClick = (value: boolean) => {
     setPopupVisiblity(value);
+  };
+
+  useEffect(() => {
+    socketInitializer();
+  }, []);
+
+  const socketInitializer = async () => {
+    await fetch("/api/socket");
+    SocketService()
+      .then((socket) => setSocketState(socket))
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

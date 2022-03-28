@@ -5,6 +5,8 @@ export interface PlaygroundInterface {
   roomtype: string;
   currentPlayerSymbol: string;
   boardArray: Array<Array<string | null>>;
+  isGameStarted: boolean;
+  isfirstPlayer: boolean;
 }
 
 export const gameAtom = atom<PlaygroundInterface>({
@@ -14,5 +16,7 @@ export const gameAtom = atom<PlaygroundInterface>({
     roomtype: "Public",
     currentPlayerSymbol: "",
     boardArray: [],
+    isGameStarted: false,
+    isfirstPlayer: true,
   },
 });
