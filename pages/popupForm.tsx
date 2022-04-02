@@ -6,6 +6,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { gameAtom, PlaygroundInterface } from "../atom/gameAtom";
 import { userAtom, UserInterface } from "../atom/userAtom";
 import {
+  nullString,
   privateState,
   publicState,
   xPlayerSymbol,
@@ -35,6 +36,8 @@ const PopupForm = () => {
     var data: UserInterface = {
       name: e.target[0].value,
       boradPreference: Number(e.target[1].value),
+      noOfGamePlayed: 0,
+      noOfwin: 0,
     };
 
     var roomid = data.boradPreference.toString() + "_" + uuid_v4().slice(0, 5);
@@ -66,8 +69,8 @@ const PopupForm = () => {
       isGameStarted: joinState.gameStarted,
       isfirstPlayer: joinState.isFirstPlayer,
       isYourChance: joinState.isFirstPlayer,
+      gameResult: nullString,
     };
-    console.log("game state ->", state);
     setGameState(state);
 
     router.replace("/playground");
@@ -81,6 +84,8 @@ const PopupForm = () => {
     var data: UserInterface = {
       name: name,
       boradPreference: boardPreference,
+      noOfGamePlayed: 0,
+      noOfwin: 0,
     };
 
     try {

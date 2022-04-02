@@ -2,6 +2,10 @@ export const xPlayerSymbol = "X";
 export const yPlayerSymbol = "O";
 export const publicState = "Public";
 export const privateState = "Private";
+export const winString = "win";
+export const loseString = "lose";
+export const tieString = "tie";
+export const nullString = "null";
 
 export const socketTerms = {
   connect: "connect",
@@ -20,4 +24,5 @@ export const socketTerms = {
   pushGameResult: "push_game_result",
   pullGameResult: "pull_game_result",
   deleteRoom: "delete_room",
+  resetUserDataOnLeave: "reset_data",
 };

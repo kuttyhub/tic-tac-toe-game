@@ -40,4 +40,41 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: grid;
   place-items: center;
+  cursor: not-allowed;
+}
+
+.result {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  background-color: #121c2b;
+  display: grid;
+  place-items: center;
+  cursor: default;
+}
+
+.result p {
+  color: whitesmoke;
+  padding-bottom: 1rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+.row button:first-child {
+  background-color: aquamarine;
+  color: #121c2b;
+  margin-right: 0.8rem;
+  font-size: medium;
+}
+.row button:nth-child(2) {
+  font-size: medium;
+}
+
+.win {
+  color: greenyellow;
+}
+
+.lose {
+  color: rgb(165, 44, 44);
 }

@@ -24,7 +24,6 @@ const SocketService = async (): Promise<
       reject(err);
     });
 
-    // console.log("connected", socket);
     resolve(socket);
   });
 };

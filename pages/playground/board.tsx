@@ -1,26 +1,27 @@
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { gameAtom, PlaygroundInterface } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
-import { socketTerms } from "../../utils/constants";
+import {
+  nullString,
+  socketTerms,
+  tieString,
+  winString,
+} from "../../utils/constants";
 import style from "../../styles/Board.module.css";
 import { checkWinner } from "../../utils/checkGameWin";
+import { userAtom } from "../../atom/userAtom";
 const Board = () => {
   useEffect(() => {
     subscribeEvents();
   }, []);
 
   const [gameState, setGameState] = useRecoilState(gameAtom);
+  const setUserData = useSetRecoilState(userAtom);
   const socket = useRecoilValue(socketAtom);
-  const [moveCount, setMoveCount] = useState(
-    gameState.boardArray.length * gameState.boardArray.length
-  );
 
   const subscribeEvents = () => {
-    console.log("subscribing event");
     socket!.on(socketTerms.pullGameUpdate, (boardArray: any) => {
-      console.log("pulling update state", boardArray);
-      setMoveCount(moveCount - 1);
       setGameState((old) => {
         return {
           ...old,
@@ -30,8 +31,12 @@ const Board = () => {
       });
     });
     socket!.on(socketTerms.pullGameResult, (result) => {
-      console.log("pulling Game finish", result);
-      alert(result);
+      setGameState((old) => {
+        return { ...old, gameResult: result };
+      });
+      setUserData((old) => {
+        return { ...old, noOfGamePlayed: old.noOfGamePlayed + 1 };
+      });
     });
   };
 
@@ -40,49 +45,49 @@ const Board = () => {
       return arr.slice();
     });
 
-    boardArray[i][j] = gameState.currentPlayerSymbol;
+    if (boardArray[i][j] === null) {
+      boardArray[i][j] = gameState.currentPlayerSymbol;
 
-    //update State
-    setMoveCount(moveCount - 1);
-    setGameState((old) => {
-      return {
-        ...old,
+      //chck result
+      var result = checkWinner(i, j, gameState.currentPlayerSymbol, boardArray);
+
+      var gameResult = nullString;
+      if (result == 1 || result == 0) {
+        var finishState = {
+          roomId: gameState.roomid,
+          result: result,
+        };
+
+        gameResult = result == 1 ? winString : tieString;
+        socket?.emit(socketTerms.pushGameResult, finishState);
+
+        setUserData((old) => {
+          var noOfwin = result == 1 ? old.noOfwin + 1 : old.noOfwin;
+          return {
+            ...old,
+            noOfGamePlayed: old.noOfGamePlayed + 1,
+            noOfwin: noOfwin,
+          };
+        });
+      }
+
+      //update State
+      setGameState((old) => {
+        return {
+          ...old,
+          boardArray: boardArray,
+          isYourChance: !old.isYourChance,
+          gameResult: gameResult,
+        };
+      });
+
+      var data = {
+        roomId: gameState.roomid,
         boardArray: boardArray,
-        isYourChance: !old.isYourChance,
       };
-    });
-    var data = {
-      roomId: gameState.roomid,
-      boardArray: boardArray,
-    };
-    socket!.emit(socketTerms.pushGameUpdate, data);
-
-    checkIsWon(i, j, boardArray);
-  };
-
-  const checkIsWon = (i: number, j: number, boardArray: any) => {
-    var result = checkWinner(
-      i,
-      j,
-      gameState.currentPlayerSymbol,
-      boardArray,
-      moveCount - 1
-    );
-
-    var finishState = {
-      roomId: gameState.roomid,
-      result: result,
-    };
-
-    if (result == 1) {
-      socket?.emit(socketTerms.pushGameResult, finishState);
-      alert("winnner");
-    } else if (result == 0) {
-      socket?.emit(socketTerms.pushGameResult, finishState);
-      alert("tie");
+      socket!.emit(socketTerms.pushGameUpdate, data);
     }
   };
-
   return (
     <div className={style.board}>
       {!gameState.isYourChance && <div className={style.overlay} />}

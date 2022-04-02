@@ -2,11 +2,17 @@ export const checkWinner = (
   iIdx: number,
   jIdx: number,
   player: String,
-  data: (String | null)[][],
-  moveCount: number
+  data: (String | null)[][]
 ) => {
   var arraySize = data.length;
-
+  var moveCount = 0;
+  for (var row of data) {
+    for (var ele of row) {
+      if (ele === null) {
+        moveCount += 1;
+      }
+    }
+  }
   //horizontal
   var flag = true;
   for (var i = 0; i < arraySize; i++) {
@@ -53,5 +59,5 @@ export const checkWinner = (
     }
   }
 
-  if (moveCount === 1) return 0;
+  if (moveCount === 0) return 0;
 };

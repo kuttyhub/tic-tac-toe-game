@@ -31,6 +31,5 @@ export const joinGameRoomWithId = async (
 
 export const OnGameStart = async (socket: Socket, listener: () => void) => {
   //listen to the game starting
-  console.log("listening to game start...!");
   socket.on(socketTerms.startGame, listener);
 };

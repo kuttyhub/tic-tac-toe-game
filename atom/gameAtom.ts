@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import { nullString, publicState } from "../utils/constants";
 
 export interface PlaygroundInterface {
   roomid: string;
@@ -8,17 +9,19 @@ export interface PlaygroundInterface {
   isGameStarted: boolean;
   isfirstPlayer: boolean;
   isYourChance: boolean;
+  gameResult: string;
 }
 
 export const gameAtom = atom<PlaygroundInterface>({
   key: "playgroundState",
   default: {
-    roomid: "null",
-    roomtype: "Public",
+    roomid: nullString,
+    roomtype: publicState,
     currentPlayerSymbol: "",
     boardArray: [],
     isGameStarted: false,
     isfirstPlayer: true,
     isYourChance: true,
+    gameResult: nullString,
   },
 });

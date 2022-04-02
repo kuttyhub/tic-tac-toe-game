@@ -1,5 +1,10 @@
 import { Server, Socket } from "socket.io";
-import { socketTerms, publicState } from "../../utils/constants";
+import {
+  socketTerms,
+  publicState,
+  tieString,
+  loseString,
+} from "../../utils/constants";
 import { joinGameState } from "../../services/gameService";
 
 interface Room {
@@ -50,9 +55,20 @@ export default function (req: any, res: any) {
       });
 
       socket.on(socketTerms.leaveRoom, (message: { roomId: string }) => {
-        console.log("requesting to leave");
+        console.log("requesting to leave", message);
         socket.leave(message.roomId);
+
+        var room = rooms.get(message.roomId);
+        room!.players = room!.players.filter((p) => p != socket.id);
+
+        if (room?.players.length === 1) {
+          rooms.set(message.roomId, room!);
+        } else {
+          rooms.delete(message.roomId);
+        }
         console.log("Room leaved successfully..!");
+
+        socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
       });
 
       socket.on(socketTerms.deleteRoom, (message: { roomId: string }) => {
@@ -60,6 +76,8 @@ export default function (req: any, res: any) {
         socket.leave(message.roomId);
         rooms.delete(message.roomId);
         console.log("Room Deleted successfully..!");
+
+        socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
       });
 
       socket.on(socketTerms.getRooms, () => {
@@ -80,10 +98,11 @@ export default function (req: any, res: any) {
       socket.on(
         socketTerms.pushGameResult,
         (message: { roomId: string; result: number }) => {
-          let msg = "tie";
+          let msg = tieString;
           if (message.result == 1) {
-            msg = "lose";
+            msg = loseString;
           }
+          console.log(msg);
           socket.to(message.roomId).emit(socketTerms.pullGameResult, msg);
         }
       );
