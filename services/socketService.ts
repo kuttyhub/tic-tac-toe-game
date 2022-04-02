@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { socketTerms } from "../constants/constants";
+import { socketTerms } from "../utils/constants";
 
 const SocketService = async (): Promise<
   Socket<DefaultEventsMap, DefaultEventsMap>

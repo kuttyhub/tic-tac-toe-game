@@ -10,11 +10,15 @@ import {
   publicState,
   xPlayerSymbol,
   yPlayerSymbol,
-} from "../constants/constants";
+} from "../utils/constants";
 
 import styles from "../styles/Home.module.css";
 import { socketAtom } from "../atom/socketAtom";
-import { joinGameRoom, joinGameState } from "../services/gameService";
+import {
+  joinGameRoom,
+  joinGameRoomWithId,
+  joinGameState,
+} from "../services/gameService";
 
 const PopupForm = () => {
   const [isCreateRoomform, setisCreateRoomform] = useState(true);
@@ -34,28 +38,26 @@ const PopupForm = () => {
     };
 
     var roomid = data.boradPreference.toString() + "_" + uuid_v4().slice(0, 5);
-
-    //TODO: join room based on public and private
-
+    var type = isPublicType ? publicState : privateState;
     try {
-      var joinState: joinGameState | void = await joinGameRoom(socket!, roomid);
-      setStates(data, joinState, roomid);
+      var joinState: joinGameState | void = await joinGameRoom(
+        socket!,
+        roomid,
+        type
+      );
+      setStates(data, joinState);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const setStates = (
-    data: UserInterface,
-    joinState: joinGameState,
-    roomid: string
-  ) => {
+  const setStates = (data: UserInterface, joinState: joinGameState) => {
     setUserData(data);
     var array = Array.from({ length: data.boradPreference }, () =>
       Array.from({ length: data.boradPreference }, () => null)
     );
     var state: PlaygroundInterface = {
-      roomid: roomid,
+      roomid: joinState.roomId,
       roomtype: isPublicType ? publicState : privateState,
       currentPlayerSymbol: joinState.isFirstPlayer
         ? xPlayerSymbol
@@ -63,6 +65,7 @@ const PopupForm = () => {
       boardArray: array,
       isGameStarted: joinState.gameStarted,
       isfirstPlayer: joinState.isFirstPlayer,
+      isYourChance: joinState.isFirstPlayer,
     };
     console.log("game state ->", state);
     setGameState(state);
@@ -81,16 +84,13 @@ const PopupForm = () => {
     };
 
     try {
-      var joinState: joinGameState = await joinGameRoom(socket!, roomid);
-      setStates(data, joinState, roomid);
+      var joinState: joinGameState = await joinGameRoomWithId(socket!, roomid);
+      setStates(data, joinState);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const canConnectToRoom = (id: string) => {
-    // TODO: check sockets room can connect
-  };
   return (
     <div className={styles.popup}>
       <div className={styles.swapButtons}>

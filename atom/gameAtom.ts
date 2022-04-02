@@ -7,6 +7,7 @@ export interface PlaygroundInterface {
   boardArray: Array<Array<string | null>>;
   isGameStarted: boolean;
   isfirstPlayer: boolean;
+  isYourChance: boolean;
 }
 
 export const gameAtom = atom<PlaygroundInterface>({
@@ -18,5 +19,6 @@ export const gameAtom = atom<PlaygroundInterface>({
     boardArray: [],
     isGameStarted: false,
     isfirstPlayer: true,
+    isYourChance: true,
   },
 });

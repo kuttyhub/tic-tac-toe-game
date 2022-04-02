@@ -9,15 +9,13 @@ import WaitingScreen from "./waitingScreen";
 import { gameAtom } from "../../atom/gameAtom";
 import { OnGameStart } from "../../services/gameService";
 import { socketAtom } from "../../atom/socketAtom";
-import { useEffect, useState } from "react";
-import { socketTerms } from "../../constants/constants";
+import { useEffect } from "react";
+import { socketTerms } from "../../utils/constants";
 
 const PlayGround: NextPage = () => {
   const userData = useRecoilValue(userAtom);
   const [gameState, setGameState] = useRecoilState(gameAtom);
   const socket = useRecoilValue(socketAtom);
-
-  const [isYourChance, setisYourChance] = useState(gameState.isfirstPlayer);
 
   const handleLeave = () => {
     socket!.emit(socketTerms.leaveRoom, { roomid: gameState.roomid });
@@ -58,7 +56,7 @@ const PlayGround: NextPage = () => {
             Your Symbol: <b>{gameState.currentPlayerSymbol}</b>
           </p>
         </div>
-        <h2>{isYourChance ? "Your" : "Opponent"} Turn</h2>
+        <h2>{gameState.isYourChance ? "Your" : "Opponent"} Turn</h2>
         <button onClick={handleLeave}>Leave</button>
       </div>
       <div className={styles.board}>
