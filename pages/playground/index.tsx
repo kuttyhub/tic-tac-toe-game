@@ -10,13 +10,7 @@ import { gameAtom } from "../../atom/gameAtom";
 import { OnGameStart } from "../../services/gameService";
 import { socketAtom } from "../../atom/socketAtom";
 import { useEffect } from "react";
-import {
-  loseString,
-  nullString,
-  socketTerms,
-  winString,
-  xPlayerSymbol,
-} from "../../utils/constants";
+import { nullString, socketTerms, xPlayerSymbol } from "../../utils/constants";
 import ResultPopup from "./resultPopup";
 
 const PlayGround: NextPage = () => {

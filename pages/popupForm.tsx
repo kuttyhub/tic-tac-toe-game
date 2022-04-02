@@ -50,7 +50,7 @@ const PopupForm = () => {
       );
       setStates(data, joinState);
     } catch (err) {
-      console.error(err);
+      alert(err);
     }
   };
 
