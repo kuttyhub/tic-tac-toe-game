@@ -34,8 +34,8 @@ const PopupForm = () => {
     e.preventDefault();
 
     var data: UserInterface = {
-      name: e.target[0].value,
-      boradPreference: Number(e.target[1].value),
+      name: e.target[0].value.trim(),
+      boradPreference: Number(e.target[1].value.trim()),
       noOfGamePlayed: 0,
       noOfwin: 0,
     };
@@ -78,8 +78,8 @@ const PopupForm = () => {
 
   const joinRoomWithId = async (e: any) => {
     e.preventDefault();
-    var name = e.target[0].value;
-    var roomid: string = e.target[1].value;
+    var name = e.target[0].value.trim();
+    var roomid: string = e.target[1].value.trim();
     var boardPreference = Number(roomid.split("_")[0]);
     var data: UserInterface = {
       name: name,
@@ -92,7 +92,7 @@ const PopupForm = () => {
       var joinState: joinGameState = await joinGameRoomWithId(socket!, roomid);
       setStates(data, joinState);
     } catch (err) {
-      console.error(err);
+      alert(err);
     }
   };
 
