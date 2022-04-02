@@ -3,8 +3,9 @@ import { useRecoilValue } from "recoil";
 import { gameAtom } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
 import { userAtom } from "../../atom/userAtom";
+import { leaveRoom } from "../../services/gameService";
 import styles from "../../styles/WaitingScreen.module.css";
-import { socketTerms } from "../../utils/constants";
+
 const WaitingScreen = () => {
   const userData = useRecoilValue(userAtom);
   const gameState = useRecoilValue(gameAtom);
@@ -12,8 +13,9 @@ const WaitingScreen = () => {
 
   const router = useRouter();
   const handleLeave = () => {
-    socket!.emit(socketTerms.leaveRoom, { roomId: gameState.roomid });
-    router.replace("/");
+    leaveRoom(socket!, gameState.roomid)
+      .then((result) => router.replace("/"))
+      .then((error) => console.error(error));
   };
   return (
     <div className={styles.container}>

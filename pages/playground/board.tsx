@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { gameAtom, PlaygroundInterface } from "../../atom/gameAtom";
+import { gameAtom } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
 import {
   nullString,
@@ -11,6 +11,7 @@ import {
 import style from "../../styles/Board.module.css";
 import { checkWinner } from "../../utils/checkGameWin";
 import { userAtom } from "../../atom/userAtom";
+
 const Board = () => {
   useEffect(() => {
     subscribeEvents();

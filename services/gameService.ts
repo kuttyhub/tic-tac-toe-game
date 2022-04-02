@@ -33,3 +33,14 @@ export const OnGameStart = async (socket: Socket, listener: () => void) => {
   //listen to the game starting
   socket.on(socketTerms.startGame, listener);
 };
+
+export const leaveRoom = async (
+  socket: Socket,
+  roomId: string
+): Promise<boolean> => {
+  return new Promise((rs, rj) => {
+    socket!.emit(socketTerms.leaveRoom, { roomId: roomId });
+    socket.on(socketTerms.leavedRoom, () => rs(true));
+    socket.on(socketTerms.leaveRoomError, (error) => rj(error));
+  });
+};

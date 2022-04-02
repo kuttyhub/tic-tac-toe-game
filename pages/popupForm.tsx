@@ -24,6 +24,7 @@ import {
 const PopupForm = () => {
   const [isCreateRoomform, setisCreateRoomform] = useState(true);
   const [isPublicType, setisPublicType] = useState(true);
+  const [isJoining, setIsJoining] = useState(false);
   const router = useRouter();
   const setUserData = useSetRecoilState(userAtom);
   const setGameState = useSetRecoilState(gameAtom);
@@ -32,6 +33,7 @@ const PopupForm = () => {
 
   const createRoom = async (e: any) => {
     e.preventDefault();
+    setIsJoining(true);
 
     var data: UserInterface = {
       name: e.target[0].value.trim(),
@@ -72,12 +74,15 @@ const PopupForm = () => {
       gameResult: nullString,
     };
     setGameState(state);
+    setIsJoining(false);
 
     router.replace("/playground");
   };
 
   const joinRoomWithId = async (e: any) => {
     e.preventDefault();
+    setIsJoining(true);
+
     var name = e.target[0].value.trim();
     var roomid: string = e.target[1].value.trim();
     var boardPreference = Number(roomid.split("_")[0]);
@@ -87,7 +92,6 @@ const PopupForm = () => {
       noOfGamePlayed: 0,
       noOfwin: 0,
     };
-
     try {
       var joinState: joinGameState = await joinGameRoomWithId(socket!, roomid);
       setStates(data, joinState);
@@ -151,7 +155,11 @@ const PopupForm = () => {
                 play with them !
               </p>
             )}
-            <button type="submit">Create/Join Room</button>
+            {isJoining ? (
+              <button disabled>Joining</button>
+            ) : (
+              <button type="submit">Create/Join Room</button>
+            )}
           </form>
         </div>
       ) : (
@@ -161,7 +169,11 @@ const PopupForm = () => {
             <input required type="text" placeholder="Name" />
             <label htmlFor="">Enter your Room id</label>
             <input required type="text" placeholder="room id" />
-            <button type="submit">Join</button>
+            {isJoining ? (
+              <button disabled>Joining</button>
+            ) : (
+              <button type="submit">Join</button>
+            )}
           </form>
         </div>
       )}

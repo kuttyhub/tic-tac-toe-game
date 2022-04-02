@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 import WaitingScreen from "./waitingScreen";
 import { gameAtom } from "../../atom/gameAtom";
-import { OnGameStart } from "../../services/gameService";
+import { leaveRoom, OnGameStart } from "../../services/gameService";
 import { socketAtom } from "../../atom/socketAtom";
 import { useEffect } from "react";
 import { nullString, socketTerms, xPlayerSymbol } from "../../utils/constants";
@@ -20,8 +20,9 @@ const PlayGround: NextPage = () => {
   const router = useRouter();
 
   const handleLeave = () => {
-    socket!.emit(socketTerms.leaveRoom, { roomId: gameState.roomid });
-    router.replace("/");
+    leaveRoom(socket!, gameState.roomid)
+      .then((result) => router.replace("/"))
+      .then((error) => console.error(error));
   };
 
   const listenGameStart = () => {

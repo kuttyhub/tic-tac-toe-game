@@ -1,8 +1,8 @@
 import { NextPage } from "next";
+import Head from "next/head";
 import { MouseEvent, useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { socketAtom } from "../atom/socketAtom";
-import { socketTerms } from "../utils/constants";
 import SocketService from "../services/socketService";
 import styles from "../styles/Home.module.css";
 import PopupForm from "./popupForm";
@@ -13,8 +13,6 @@ const HomePage: NextPage = () => {
   const handleClick = (value: boolean) => {
     setPopupVisiblity(value);
   };
-
-  const socket = useRecoilValue(socketAtom);
   useEffect(() => {
     socketInitializer();
   }, []);
@@ -32,6 +30,10 @@ const HomePage: NextPage = () => {
 
   return (
     <div className={styles.container}>
+      <Head>
+        <title>Multiplayer | Tic-Tac-Toe`</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <h2>Play Tic-Tac-Toe Game with around the world</h2>
       <br />
       <button onClick={(e: MouseEvent) => handleClick(true)}>Let's Play</button>

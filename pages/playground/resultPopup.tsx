@@ -2,13 +2,9 @@ import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { gameAtom } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
+import { leaveRoom } from "../../services/gameService";
 import styles from "../../styles/playground.module.css";
-import {
-  loseString,
-  nullString,
-  socketTerms,
-  winString,
-} from "../../utils/constants";
+import { loseString, nullString, winString } from "../../utils/constants";
 
 const ResultPopup = () => {
   const [gameState, setGameState] = useRecoilState(gameAtom);
@@ -37,8 +33,9 @@ const ResultPopup = () => {
   };
 
   const handleLeave = () => {
-    socket!.emit(socketTerms.leaveRoom, { roomId: gameState.roomid });
-    router.replace("/");
+    leaveRoom(socket!, gameState.roomid)
+      .then((result) => router.replace("/"))
+      .then((error) => console.error(error));
   };
 
   const handleNextMatchOk = () => {

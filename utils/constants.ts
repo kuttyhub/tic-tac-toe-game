@@ -16,6 +16,8 @@ export const socketTerms = {
   joinedRoom: "joined_room",
   joinRoomError: "join_room_error",
   leaveRoom: "leave_room",
+  leavedRoom: "leaved_room",
+  leaveRoomError: "leave_room_error",
   startGame: "start_game",
   getRooms: "get_rooms",
   emitRooms: "emit_rooms",

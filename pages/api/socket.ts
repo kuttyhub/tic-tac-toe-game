@@ -57,18 +57,23 @@ export default function (req: any, res: any) {
       socket.on(socketTerms.leaveRoom, (message: { roomId: string }) => {
         console.log("requesting to leave", message);
         socket.leave(message.roomId);
-
-        var room = rooms.get(message.roomId);
-        room!.players = room!.players.filter((p) => p != socket.id);
-        console.log(room);
-        if (room?.players.length === 1) {
-          rooms.set(message.roomId, room!);
-        } else {
-          rooms.delete(message.roomId);
+        try {
+          var room = rooms.get(message.roomId);
+          room!.players = room!.players.filter((p) => p != socket.id);
+          console.log(room);
+          if (room?.players.length === 1) {
+            rooms.set(message.roomId, room!);
+          } else {
+            rooms.delete(message.roomId);
+          }
+          console.log("Room leaved successfully..!");
+          socket.to(message.roomId).emit(socketTerms.leavedRoom);
+          socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
+        } catch (error) {
+          socket
+            .to(message.roomId)
+            .emit(socketTerms.leaveRoomError, { error: error });
         }
-        console.log("Room leaved successfully..!");
-
-        socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
       });
 
       socket.on(socketTerms.getRooms, () => {
