@@ -37,7 +37,7 @@ const ResultPopup = () => {
   };
 
   const handleLeave = () => {
-    socket!.emit(socketTerms.deleteRoom, { roomId: gameState.roomid });
+    socket!.emit(socketTerms.leaveRoom, { roomId: gameState.roomid });
     router.replace("/");
   };
 

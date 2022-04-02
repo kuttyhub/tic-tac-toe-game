@@ -60,22 +60,13 @@ export default function (req: any, res: any) {
 
         var room = rooms.get(message.roomId);
         room!.players = room!.players.filter((p) => p != socket.id);
-
+        console.log(room);
         if (room?.players.length === 1) {
           rooms.set(message.roomId, room!);
         } else {
           rooms.delete(message.roomId);
         }
         console.log("Room leaved successfully..!");
-
-        socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
-      });
-
-      socket.on(socketTerms.deleteRoom, (message: { roomId: string }) => {
-        console.log("requesting to Delete");
-        socket.leave(message.roomId);
-        rooms.delete(message.roomId);
-        console.log("Room Deleted successfully..!");
 
         socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
       });

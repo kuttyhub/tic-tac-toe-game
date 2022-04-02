@@ -113,7 +113,7 @@ const PopupForm = () => {
         </h3>
       </div>
       {isCreateRoomform ? (
-        <div className="createroom">
+        <div className={styles.createroom}>
           <form action="" onSubmit={createRoom}>
             <label htmlFor="username">What would you like to Call :</label>
             <input type="text" name="username" placeholder="name" required />
@@ -141,20 +141,22 @@ const PopupForm = () => {
             </div>
             {isPublicType ? (
               <p className={styles.warning}>
-                *If a public room is already available it will add you otherwise
-                a spepare room will be created on your board size
+                * You will be added to a public room of your chosen size,if it
+                is available <br />
+                otherwise a new Public Room will be created for you !
               </p>
             ) : (
               <p className={styles.warning}>
-                *It create a private room.members can join via only the room id
+                *Create a private Room and share the roomId with your friends to
+                play with them !
               </p>
             )}
             <button type="submit">Create/Join Room</button>
           </form>
         </div>
       ) : (
-        <div>
-          <form action="" onSubmit={joinRoomWithId} className={styles.joinroom}>
+        <div className={styles.joinroom}>
+          <form action="" onSubmit={joinRoomWithId}>
             <label htmlFor="">Enter your Name:</label>
             <input required type="text" placeholder="Name" />
             <label htmlFor="">Enter your Room id</label>
