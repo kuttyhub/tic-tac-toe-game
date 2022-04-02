@@ -16,12 +16,12 @@ const PlayGround: NextPage = () => {
   const userData = useRecoilValue(userAtom);
   const [gameState, setGameState] = useRecoilState(gameAtom);
   const socket = useRecoilValue(socketAtom);
+  const router = useRouter();
 
   const handleLeave = () => {
     socket!.emit(socketTerms.leaveRoom, { roomid: gameState.roomid });
     router.replace("/");
   };
-  const router = useRouter();
 
   const listenGameStart = () => {
     OnGameStart(socket!, () => {

@@ -1,7 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { socketTerms, publicState } from "../../utils/constants";
 import { joinGameState } from "../../services/gameService";
-import { PlaygroundInterface } from "../../atom/gameAtom";
 
 interface Room {
   id: string;
@@ -53,7 +52,14 @@ export default function (req: any, res: any) {
       socket.on(socketTerms.leaveRoom, (message: { roomId: string }) => {
         console.log("requesting to leave");
         socket.leave(message.roomId);
-        console.log("leaved successfully..!");
+        console.log("Room leaved successfully..!");
+      });
+
+      socket.on(socketTerms.deleteRoom, (message: { roomId: string }) => {
+        console.log("requesting to Delete");
+        socket.leave(message.roomId);
+        rooms.delete(message.roomId);
+        console.log("Room Deleted successfully..!");
       });
 
       socket.on(socketTerms.getRooms, () => {

@@ -19,4 +19,5 @@ export const socketTerms = {
   pullGameUpdate: "pull_game_update",
   pushGameResult: "push_game_result",
   pullGameResult: "pull_game_result",
+  deleteRoom: "delete_room",
 };
