@@ -9,7 +9,7 @@ import WaitingScreen from "./waitingScreen";
 import { gameAtom } from "../../atom/gameAtom";
 import { leaveRoom, OnGameStart } from "../../services/gameService";
 import { socketAtom } from "../../atom/socketAtom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { nullString, socketTerms, xPlayerSymbol } from "../../utils/constants";
 import ResultPopup from "./resultPopup";
 
@@ -19,10 +19,17 @@ const PlayGround: NextPage = () => {
   const socket = useRecoilValue(socketAtom);
   const router = useRouter();
 
-  const handleLeave = () => {
-    leaveRoom(socket!, gameState.roomid)
-      .then((result) => router.replace("/"))
-      .then((error) => console.error(error));
+  const [isLeaving, setIsLeaving] = useState(false);
+
+  const handleLeave = async () => {
+    setIsLeaving(true);
+    try {
+      await leaveRoom(socket!, gameState.roomid);
+      router.replace("/");
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLeaving(false);
   };
 
   const listenGameStart = () => {
@@ -87,7 +94,11 @@ const PlayGround: NextPage = () => {
           </p>
         </div>
         <h2>{gameState.isYourChance ? "Your" : "Opponent"} Turn</h2>
-        <button onClick={handleLeave}>Leave</button>
+        {isLeaving ? (
+          <button disabled>Leaving..</button>
+        ) : (
+          <button onClick={handleLeave}>Leave</button>
+        )}
       </div>
       <div className={styles.board}>
         <Board />

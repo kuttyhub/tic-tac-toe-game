@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { gameAtom } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
@@ -11,12 +12,21 @@ const WaitingScreen = () => {
   const gameState = useRecoilValue(gameAtom);
   const socket = useRecoilValue(socketAtom);
 
+  const [isLeaving, setIsLeaving] = useState(false);
+
   const router = useRouter();
-  const handleLeave = () => {
-    leaveRoom(socket!, gameState.roomid)
-      .then((result) => router.replace("/"))
-      .then((error) => console.error(error));
+
+  const handleLeave = async () => {
+    setIsLeaving(true);
+    try {
+      await leaveRoom(socket!, gameState.roomid);
+      router.replace("/");
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLeaving(false);
   };
+
   return (
     <div className={styles.container}>
       <h3>{userData.name}</h3>
@@ -28,7 +38,9 @@ const WaitingScreen = () => {
       <br />
       <p>Waiting for the opponent to join....</p>
       <br />
-      <button onClick={handleLeave}>Delete Room</button>
+      <button onClick={handleLeave} disabled={isLeaving}>
+        {isLeaving ? "Deleting.." : "Delete Room"}
+      </button>
     </div>
   );
 };

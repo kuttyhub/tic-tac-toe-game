@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { gameAtom } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
@@ -10,6 +11,8 @@ const ResultPopup = () => {
   const [gameState, setGameState] = useRecoilState(gameAtom);
   const socket = useRecoilValue(socketAtom);
   const router = useRouter();
+
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const getResultString = () => {
     var msg = "";
@@ -32,10 +35,15 @@ const ResultPopup = () => {
     return "";
   };
 
-  const handleLeave = () => {
-    leaveRoom(socket!, gameState.roomid)
-      .then((result) => router.replace("/"))
-      .then((error) => console.error(error));
+  const handleLeave = async () => {
+    setIsLeaving(true);
+    try {
+      await leaveRoom(socket!, gameState.roomid);
+      router.replace("/");
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLeaving(false);
   };
 
   const handleNextMatchOk = () => {
@@ -60,8 +68,12 @@ const ResultPopup = () => {
         <br />
         <p>Want an Another Match?</p>
         <div className={styles.row}>
-          <button onClick={handleNextMatchOk}>Yes</button>
-          <button onClick={handleLeave}>No</button>
+          <button onClick={handleNextMatchOk} disabled={isLeaving}>
+            Yes
+          </button>
+          <button onClick={handleLeave} disabled={isLeaving}>
+            No
+          </button>
         </div>
       </div>
     </div>

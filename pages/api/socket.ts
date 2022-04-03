@@ -67,11 +67,11 @@ export default function (req: any, res: any) {
             rooms.delete(message.roomId);
           }
           console.log("Room leaved successfully..!");
-          socket.to(message.roomId).emit(socketTerms.leavedRoom);
+          socket.emit(socketTerms.leavedRoom);
           socket.to(message.roomId).emit(socketTerms.resetUserDataOnLeave);
         } catch (error) {
           socket
-            .to(message.roomId)
+            // .to(message.roomId)
             .emit(socketTerms.leaveRoomError, { error: error });
         }
       });

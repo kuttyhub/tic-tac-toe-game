@@ -39,8 +39,11 @@ export const leaveRoom = async (
   roomId: string
 ): Promise<boolean> => {
   return new Promise((rs, rj) => {
-    socket!.emit(socketTerms.leaveRoom, { roomId: roomId });
-    socket.on(socketTerms.leavedRoom, () => rs(true));
+    socket.emit(socketTerms.leaveRoom, { roomId: roomId });
+    socket.on(socketTerms.leavedRoom, (val) => {
+      console.log("room leaved Successfully", val);
+      rs(true);
+    });
     socket.on(socketTerms.leaveRoomError, (error) => rj(error));
   });
 };
