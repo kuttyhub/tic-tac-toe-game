@@ -31,7 +31,7 @@ const HomePage: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Multiplayer | Tic-Tac-Toe`</title>
+        <title>Multiplayer | Tic-Tac-Toe</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <h2>Play Tic-Tac-Toe Game with around the world</h2>

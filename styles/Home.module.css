@@ -10,7 +10,7 @@
 }
 .container h2 {
   color: #84cc16;
-  max-width: 30vw;
+  max-width: 30rem;
   text-align: center;
   font-size: xx-large;
   margin-bottom: 1rem;
@@ -87,6 +87,7 @@
   display: flex;
 }
 .swapButtons h3 {
+  text-align: center;
   position: relative;
   margin: 1rem;
   font-weight: 500;
@@ -144,4 +145,10 @@
   max-width: 35rem;
   margin-top: 1rem;
   color: rgb(221, 0, 0);
+}
+
+@media only screen and (min-width: 412px) {
+  .container h2 {
+    max-width: 25rem;
+  }
 }

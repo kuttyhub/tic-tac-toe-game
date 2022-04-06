@@ -1,6 +1,8 @@
 .container {
-  height: 60vh;
+  height: 50vh;
   width: 60vw;
+  padding: 1rem;
+  text-align: center;
   background-color: #121c2b;
   display: flex;
   flex-direction: column;

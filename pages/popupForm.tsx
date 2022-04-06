@@ -124,9 +124,7 @@ const PopupForm = () => {
             <label htmlFor="board-size">Select Board Size :</label>
             <select name="board-size">
               <option value="3">3</option>
-              <option value="4">4</option>
               <option value="5">5</option>
-              <option value="6">6</option>
             </select>
             <label>Room Type :</label>
             <div className={styles.roomtype}>

@@ -6,8 +6,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 10vh;
+  min-height: 10vh;
 }
+.turn {
+  flex: 1;
+  margin: 0rem 2rem;
+  word-wrap: break-word;
+  text-align: center;
+}
+.info {
+  flex: 1;
+  word-wrap: break-word;
+}
+.button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .body button {
   padding: 0.5rem 1rem;
   font-size: larger;
@@ -46,6 +63,7 @@
 .result {
   padding: 1rem 2rem;
   border-radius: 0.5rem;
+  text-align: center;
   background-color: #121c2b;
   display: grid;
   place-items: center;
@@ -76,5 +94,26 @@
 }
 
 .lose {
-  color: rgb(165, 44, 44);
+  color: #a52c2c;
+}
+
+.yourturn {
+  color: #84cc16;
+}
+
+.opponentturn {
+  color: #a52c2c;
+}
+
+@media only screen and (max-width: 512px) {
+  .body {
+    padding: 0rem 1rem;
+  }
+  .title {
+    font-size: small;
+  }
+  .title button {
+    font-size: small;
+    padding: 0.35rem 0.8rem;
+  }
 }

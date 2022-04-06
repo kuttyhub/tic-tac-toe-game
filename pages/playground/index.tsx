@@ -73,7 +73,7 @@ const PlayGround: NextPage = () => {
   return (
     <div className={styles.body}>
       <div className={styles.title}>
-        <div>
+        <div className={styles.info}>
           <p>
             Name: <b>{userData.name}</b>
           </p>
@@ -93,12 +93,22 @@ const PlayGround: NextPage = () => {
             </b>
           </p>
         </div>
-        <h2>{gameState.isYourChance ? "Your" : "Opponent"} Turn</h2>
-        {isLeaving ? (
-          <button disabled>Leaving..</button>
-        ) : (
-          <button onClick={handleLeave}>Leave</button>
-        )}
+        <div className={styles.turn}>
+          <h2
+            className={
+              gameState.isYourChance ? styles.yourturn : styles.opponentturn
+            }
+          >
+            {gameState.isYourChance ? "Your" : "Opponent"} Turn
+          </h2>
+        </div>
+        <div className={styles.button}>
+          {isLeaving ? (
+            <button disabled>Leaving..</button>
+          ) : (
+            <button onClick={handleLeave}>Leave</button>
+          )}
+        </div>
       </div>
       <div className={styles.board}>
         <Board />
