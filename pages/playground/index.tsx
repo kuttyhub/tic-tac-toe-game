@@ -21,6 +21,18 @@ const PlayGround: NextPage = () => {
 
   const [isLeaving, setIsLeaving] = useState(false);
 
+  useEffect(() => {
+    if (gameState.roomid === nullString) {
+      redirectToHome();
+    } else {
+      listenGameStart();
+    }
+  }, []);
+
+  const redirectToHome = () => {
+    router.replace("/");
+  };
+
   const handleLeave = async () => {
     setIsLeaving(true);
     try {
@@ -65,10 +77,6 @@ const PlayGround: NextPage = () => {
       });
     });
   };
-
-  useEffect(() => {
-    listenGameStart();
-  }, []);
 
   return (
     <div className={styles.body}>

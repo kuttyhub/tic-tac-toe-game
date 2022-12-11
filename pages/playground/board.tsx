@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { gameAtom } from "../../atom/gameAtom";
 import { socketAtom } from "../../atom/socketAtom";
@@ -13,13 +13,15 @@ import { checkWinner } from "../../utils/checkGameWin";
 import { userAtom } from "../../atom/userAtom";
 
 const Board = () => {
-  useEffect(() => {
-    subscribeEvents();
-  }, []);
-
   const [gameState, setGameState] = useRecoilState(gameAtom);
   const setUserData = useSetRecoilState(userAtom);
   const socket = useRecoilValue(socketAtom);
+
+  useEffect(() => {
+    if (gameState.roomid !== nullString) {
+      subscribeEvents();
+    }
+  }, []);
 
   const subscribeEvents = () => {
     socket!.on(socketTerms.pullGameUpdate, (boardArray: any) => {
