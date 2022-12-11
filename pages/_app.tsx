@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import Script from "next/script";
+import ErrorBoundary from "./ErrorBoundary";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -23,7 +24,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     `}
       </Script>
 
-      <Component {...pageProps} />
+      <ErrorBoundary>
+        <Component {...pageProps} />
+      </ErrorBoundary>
     </RecoilRoot>
   );
 }
