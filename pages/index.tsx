@@ -36,7 +36,9 @@ const HomePage: NextPage = () => {
       </Head>
       <h2>Play Tic-Tac-Toe Game with around the world</h2>
       <br />
-      <button onClick={(e: MouseEvent) => handleClick(true)}>Let's Play</button>
+      <button onClick={(e: MouseEvent) => handleClick(true)}>
+        {"Let's Play"}
+      </button>
       {popupVisiblity && (
         <div
           className={styles.overlay}

@@ -26,6 +26,7 @@ const PlayGround: NextPage = () => {
       redirectToHome();
     } else {
       listenGameStart();
+      listenToRoomLeave();
     }
   }, []);
 
@@ -37,7 +38,7 @@ const PlayGround: NextPage = () => {
     setIsLeaving(true);
     try {
       await leaveRoom(socket!, gameState.roomid);
-      router.replace("/");
+      redirectToHome();
     } catch (error) {
       console.error(error);
     }
@@ -57,8 +58,8 @@ const PlayGround: NextPage = () => {
 
     socket?.on(socketTerms.resetUserDataOnLeave, () => {
       setGameState((old) => {
-        var arrayLength = old.boardArray.length;
-        var array = Array.from({ length: arrayLength }, () =>
+        let arrayLength = old.boardArray.length;
+        let array = Array.from({ length: arrayLength }, () =>
           Array.from({ length: arrayLength }, () => null)
         );
         return {
@@ -75,6 +76,13 @@ const PlayGround: NextPage = () => {
       setUserData((old) => {
         return { ...old, noOfGamePlayed: 0, noOfwin: 0 };
       });
+    });
+  };
+
+  const listenToRoomLeave = () => {
+    socket!.on(socketTerms.leavedRoom, (val) => {
+      console.log("room left", val);
+      redirectToHome();
     });
   };
 
