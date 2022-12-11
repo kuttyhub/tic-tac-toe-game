@@ -28,6 +28,21 @@ const PlayGround: NextPage = () => {
       listenGameStart();
       listenToRoomLeave();
     }
+    window.addEventListener("beforeunload", (event) => {
+      // Cancel the event as stated by the standard.
+      confirm(
+        "The saved changes will be destroyed. Are you sure want to leave !"
+      );
+      event.preventDefault();
+      // Chrome requires returnValue to be set.
+      event.returnValue = "";
+    });
+    return () => {
+      console.log("unmounting component...");
+      window.removeEventListener("beforeunload", (event) => {
+        event.returnValue = "";
+      });
+    };
   }, []);
 
   const redirectToHome = () => {
