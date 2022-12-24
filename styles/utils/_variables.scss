@@ -1,0 +1,29 @@
+:root {
+  --bg: #1e293b;
+  --white: white;
+  --light-white: #c6c6c6;
+  --primary-color: #84cc16;
+  --secondary-color: #84cc16;
+  --red: #e83d3d;
+
+  --max-screen-width: 1336px;
+
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+
+  @media (min-width: 787px) {
+    --font-sm: 0.875em;
+    --font-md: 1.124em;
+    --font-x-md: 1.667em;
+    --font-x-lg: 3.275em;
+  }
+  @media (max-width: 787px) {
+    --font-sm: 0.813em;
+    --font-md: 1.011em;
+    --font-x-md: 1.517em;
+    --font-x-lg: 2.775em;
+  }
+}

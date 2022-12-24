@@ -3,6 +3,8 @@ import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import Script from "next/script";
 
+import "../styles/main.scss";
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <RecoilRoot>
