@@ -1,2 +1,129 @@
 .playground-page {
+  height: 100vh;
+  position: relative;
+  .title-bar {
+    margin: auto;
+    width: 80vw;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 2rem;
+
+    .player-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+      &--text {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        b {
+          font-weight: 600;
+        }
+        p {
+          color: var(--light-gray);
+        }
+      }
+
+      &--history {
+        padding: 0px calc(5px + 1vw);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        row-gap: 10px;
+        column-gap: 5px;
+        overflow-y: auto;
+        height: 60px;
+
+        @media screen and (max-width: 756px) {
+          height: 30px;
+        }
+      }
+    }
+    @media only screen and (max-width: 756px) {
+      justify-content: space-between;
+      padding: 1rem 0rem;
+
+      .current-player {
+        position: absolute;
+        bottom: 1rem;
+        left: 5vw;
+        right: 5vw;
+      }
+    }
+  }
+
+  .board-wrapper {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+
+    h1 {
+      font-size: var(--font-x-md);
+      font-weight: 800;
+      color: var(--primary-color);
+    }
+
+    .board {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      &--overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        cursor: not-allowed;
+      }
+    }
+
+    .opponent-turn {
+      color: var(--secondary-color);
+    }
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: grid;
+    place-items: center;
+    cursor: not-allowed;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    font-size: var(--font-md);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: red;
+    background-color: transparent;
+    border: 1.5px solid red;
+
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      color: var(--white);
+      background-color: red;
+    }
+  }
+
+  @media screen and (max-width: 756px) {
+    font-size: var(--font-sm);
+    padding: 0.5rem;
+  }
 }

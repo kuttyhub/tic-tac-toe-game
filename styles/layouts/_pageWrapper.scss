@@ -1,0 +1,14 @@
+.main-wrapper {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: var(--bg);
+
+  .secondary-wrapper {
+    max-width: var(--max-screen-width);
+    margin: 0 auto;
+    padding: 0rem 3rem;
+    @media (min-width: 989px) {
+      padding: 0rem 5rem;
+    }
+  }
+}

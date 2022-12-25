@@ -1,11 +1,14 @@
+import Lottie from "lottie-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { gameAtom } from "../../atom/gameAtom";
-import { socketAtom } from "../../atom/socketAtom";
-import { userAtom } from "../../atom/userAtom";
-import { leaveRoom } from "../../services/gameService";
-import styles from "../../styles/WaitingScreen.module.css";
+
+import { gameAtom } from "../atom/gameAtom";
+import { socketAtom } from "../atom/socketAtom";
+import { userAtom } from "../atom/userAtom";
+import { leaveRoom } from "../services/gameService";
+
+import searchingOwl from "../public/lottie/searching-floating-hand.json";
 
 const WaitingScreen = () => {
   const userData = useRecoilValue(userAtom);
@@ -28,16 +31,19 @@ const WaitingScreen = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <h3>{userData.name}</h3>
+    <div className="waiting-popup">
+      <h2>Waiting for the opponent</h2>
       <br />
+      <Lottie
+        animationData={searchingOwl}
+        style={{ height: 250, width: 250 }}
+        autoPlay
+        loop
+      />
+      <h3>{userData.name}</h3>
       <h5>
         {gameState.roomid} - {gameState.roomtype}
       </h5>
-      <h5>Symbol - {gameState.currentPlayerSymbol}</h5>
-      <br />
-      <p>Waiting for the opponent to join....</p>
-      <br />
       <button onClick={handleLeave} disabled={isLeaving}>
         {isLeaving ? "Deleting.." : "Delete Room"}
       </button>

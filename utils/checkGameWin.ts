@@ -3,7 +3,7 @@ export const checkWinner = (
   jIdx: number,
   player: String,
   data: (String | null)[][]
-) => {
+): number => {
   var arraySize = data.length;
   var moveCount = 0;
   for (var row of data) {
@@ -60,4 +60,5 @@ export const checkWinner = (
   }
 
   if (moveCount === 0) return 0;
+  return Infinity;
 };

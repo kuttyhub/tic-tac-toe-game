@@ -1,16 +1,24 @@
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { gameAtom } from "../../atom/gameAtom";
-import { socketAtom } from "../../atom/socketAtom";
+
+import { userAtom } from "../atom/userAtom";
+import { gameAtom } from "../atom/gameAtom";
+import { socketAtom } from "../atom/socketAtom";
+
 import {
+  loseString,
   nullString,
   socketTerms,
   tieString,
   winString,
-} from "../../utils/constants";
-import style from "../../styles/Board.module.css";
-import { checkWinner } from "../../utils/checkGameWin";
-import { userAtom } from "../../atom/userAtom";
+  xPlayerSymbol,
+  yPlayerSymbol,
+} from "../utils/constants";
+import { OIcon, XIcon } from "../utils/icons";
+import { checkWinner } from "../utils/checkGameWin";
+
+import Cell from "./Cell";
+import { OnGameEnd, OnGameUpdate } from "../services/gameService";
 
 const Board = () => {
   const [gameState, setGameState] = useRecoilState(gameAtom);
@@ -24,7 +32,7 @@ const Board = () => {
   }, []);
 
   const subscribeEvents = () => {
-    socket!.on(socketTerms.pullGameUpdate, (boardArray: any) => {
+    OnGameUpdate(socket!, (boardArray: any) => {
       setGameState((old) => {
         return {
           ...old,
@@ -33,12 +41,23 @@ const Board = () => {
         };
       });
     });
-    socket!.on(socketTerms.pullGameResult, (result) => {
+
+    OnGameEnd(socket!, (result) => {
       setGameState((old) => {
         return { ...old, gameResult: result };
       });
       setUserData((old) => {
-        return { ...old, noOfGamePlayed: old.noOfGamePlayed + 1 };
+        let gameResult: number;
+
+        if (result == winString) {
+          gameResult = 1;
+        } else if (result == loseString) {
+          gameResult = -1;
+        } else {
+          gameResult = 0;
+        }
+
+        return { ...old, gameResults: [...old.gameResults, gameResult] };
       });
     });
   };
@@ -65,11 +84,9 @@ const Board = () => {
         socket?.emit(socketTerms.pushGameResult, finishState);
 
         setUserData((old) => {
-          var noOfwin = result == 1 ? old.noOfwin + 1 : old.noOfwin;
           return {
             ...old,
-            noOfGamePlayed: old.noOfGamePlayed + 1,
-            noOfwin: noOfwin,
+            gameResults: [...old.gameResults, result],
           };
         });
       }
@@ -91,21 +108,28 @@ const Board = () => {
       socket!.emit(socketTerms.pushGameUpdate, data);
     }
   };
+
   return (
-    <div className={style.board}>
-      {!gameState.isYourChance && <div className={style.overlay} />}
-      {gameState.boardArray.map((row: Array<string | null>, iIdx: number) => {
+    <div className="board">
+      {!gameState.isYourChance && <div className="board--overlay" />}
+      {gameState.boardArray.map((row: Array<string | null>, i: number) => {
         return (
-          <div className={style.row} key={iIdx}>
-            {row.map((cell: string | null, jIdx: number) => {
+          <div className="row" key={i}>
+            {row.map((ele: string | null, j: number) => {
               return (
-                <div
-                  className={style.cell}
-                  key={jIdx}
-                  onClick={() => handleClick(iIdx, jIdx)}
+                <Cell
+                  key={j}
+                  className={`${
+                    ele === null ? "non-active-cell" : "active-cell"
+                  } ${ele === yPlayerSymbol ? "o-icon" : ""}`}
+                  onClick={() => handleClick(i, j)}
                 >
-                  <p>{cell}</p>
-                </div>
+                  {ele == xPlayerSymbol ? (
+                    <XIcon />
+                  ) : ele == yPlayerSymbol ? (
+                    <OIcon />
+                  ) : null}
+                </Cell>
               );
             })}
           </div>

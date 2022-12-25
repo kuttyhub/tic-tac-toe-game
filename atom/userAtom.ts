@@ -1,19 +1,28 @@
 import { atom } from "recoil";
 
+export interface MessagesInterface {
+  sender: string;
+  message: string;
+  sendedTime: Date;
+}
 export interface UserInterface {
+  userId: string;
   name: string;
+  opponentName: string;
   boradPreference: number;
-  noOfGamePlayed: number;
-  noOfwin: number;
+  gameResults: Array<number>;
+  messages: Array<MessagesInterface>;
 }
 
 export const userAtom = atom<UserInterface>({
   key: "userState",
   default: {
+    userId: "",
     name: "",
-    boradPreference: 0,
-    noOfGamePlayed: 0,
-    noOfwin: 0,
+    opponentName: "",
+    boradPreference: 3,
+    gameResults: [],
+    messages: [],
   },
 });
 

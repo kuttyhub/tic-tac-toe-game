@@ -1,2 +1,68 @@
 .home-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  h1 {
+    color: #84cc16;
+    max-width: calc(15rem + 5vw);
+    text-align: center;
+    font-size: var(--font-x-md);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    font-size: larger;
+    font-weight: 700;
+    border: 0.1rem solid white;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    background-color: transparent;
+
+    transition: all 0.3s ease-in-out;
+  }
+  button:hover {
+    color: white;
+    border: 0.1rem solid #84cc16;
+    background-color: #84cc16;
+  }
+  .developer-info {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    p {
+      color: var(--token);
+      font-size: var(--font-sm);
+      font-weight: 500;
+      line-height: 1.4;
+      text-align: center;
+    }
+    a {
+      transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    a:hover {
+      color: var(--white);
+    }
+  }
+
+  .overlay {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+
+  @media only screen and (min-width: 746px) {
+    h1 {
+      max-width: 30rem;
+      font-size: var(--font-x-lg);
+    }
+  }
 }

@@ -1,14 +1,18 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { gameAtom } from "../../atom/gameAtom";
-import { socketAtom } from "../../atom/socketAtom";
-import { leaveRoom } from "../../services/gameService";
-import styles from "../../styles/playground.module.css";
-import { loseString, nullString, winString } from "../../utils/constants";
+
+import { gameAtom } from "../atom/gameAtom";
+import { socketAtom } from "../atom/socketAtom";
+import { userAtom } from "../atom/userAtom";
+
+import { leaveRoom } from "../services/gameService";
+
+import { loseString, nullString, winString } from "../utils/constants";
 
 const ResultPopup = () => {
   const [gameState, setGameState] = useRecoilState(gameAtom);
+  const userData = useRecoilValue(userAtom);
   const socket = useRecoilValue(socketAtom);
   const router = useRouter();
 
@@ -26,19 +30,10 @@ const ResultPopup = () => {
     return msg;
   };
 
-  const getClassName = () => {
-    if (gameState.gameResult === winString) {
-      return styles.win;
-    } else if (gameState.gameResult === loseString) {
-      return styles.lose;
-    }
-    return "";
-  };
-
   const handleLeave = async () => {
     setIsLeaving(true);
     try {
-      await leaveRoom(socket!, gameState.roomid);
+      await leaveRoom(socket!, gameState.roomid, userData.userId);
       router.replace("/");
     } catch (error) {
       console.error(error);
@@ -61,13 +56,11 @@ const ResultPopup = () => {
   };
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.result}>
-        <br />
-        <h3 className={getClassName()}>{getResultString()}</h3>
-        <br />
+    <div className="result-popup">
+      <div className="result">
+        <h3>{getResultString()}</h3>
         <p>Want an Another Match?</p>
-        <div className={styles.row}>
+        <div className="row">
           <button onClick={handleNextMatchOk} disabled={isLeaving}>
             Yes
           </button>

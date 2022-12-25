@@ -1,0 +1,41 @@
+.result-popup {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  cursor: not-allowed;
+
+  .result {
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    background-color: #121c2b;
+    display: grid;
+    place-items: center;
+    gap: 20px;
+    cursor: default;
+
+    p {
+      font-weight: 500;
+    }
+  }
+  .row {
+    display: flex;
+    gap: 15px;
+
+    & button:first-child {
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+      &:hover {
+        color: var(--white);
+        background-color: var(--primary-color);
+      }
+    }
+  }
+}

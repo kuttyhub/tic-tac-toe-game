@@ -1,29 +1,57 @@
 import { Server, Socket } from "socket.io";
+import { v4 as uuid_v4 } from "uuid";
+
 import {
   socketTerms,
   publicState,
   tieString,
   loseString,
 } from "../../utils/constants";
-import { joinGameState } from "../../services/gameService";
+import { CreateRoomReturnState } from "../../services/gameService";
 
+interface User {
+  userid: string;
+  name: string;
+}
 interface Room {
   id: string;
   boardPreference: number;
   type: string;
-  players: Array<string>;
+  players: Array<User>;
   lastUpdated: Date;
+}
+
+export interface CreateRoomMessage {
+  username: string;
+  boardPreference: number;
+  type: string;
+}
+export interface JoinRoomWithIdMessage {
+  roomId: string;
+  username: string;
+}
+export interface LeaveRoomMessage {
+  roomId: string;
+  userId: string;
+}
+
+export interface StartGameReturnMessage {
+  opponentName: string;
 }
 
 let rooms: Map<string, Room> = new Map();
 
-const leaveRoomWithId = async (socket: Socket, roomId: string) => {
+const leaveRoomWithId = async (
+  socket: Socket,
+  roomId: string,
+  userId: string
+) => {
   console.log("requesting to leave", roomId);
   socket.leave(roomId);
   try {
     let room = rooms.get(roomId);
     console.log(room);
-    room!.players = room!.players.filter((p) => p != socket.id);
+    room!.players = room!.players.filter((p) => p.userid != userId);
 
     // check if room is empty or update the count
     if (room?.players.length === 1) {
@@ -41,7 +69,11 @@ const leaveRoomWithId = async (socket: Socket, roomId: string) => {
   }
 };
 
-const joinRoomWithId = async (socket: Socket, roomId: string) => {
+const joinRoomWithId = async (
+  socket: Socket,
+  roomId: string,
+  username: string
+) => {
   console.log("joining room with id", roomId);
   if (rooms.has(roomId) === false) {
     socket.emit(socketTerms.joinRoomError, { error: "Invalid RoomId" });
@@ -60,12 +92,15 @@ const joinRoomWithId = async (socket: Socket, roomId: string) => {
   await socket.join(roomId);
 
   let room = rooms.get(roomId);
-  room!.players.push(socket.id);
+  room!.players.push({ userid: socket.id, name: username });
+
   room!.lastUpdated = new Date();
   rooms.set(roomId, room!);
   console.log("joined room successfully..!", room);
 
-  let msg: joinGameState = {
+  let msg: CreateRoomReturnState = {
+    userId: socket.id,
+    opponentName: "",
     gameStarted: false,
     roomId: roomId,
     isFirstPlayer: true,
@@ -75,21 +110,34 @@ const joinRoomWithId = async (socket: Socket, roomId: string) => {
     socket.emit(socketTerms.joinedRoom, msg);
     return;
   }
-
+  let opponent = room?.players.filter((p) => p.userid != socket.id);
   //on connecting second player
   msg = {
+    userId: socket.id,
+    opponentName: opponent![0].name,
     gameStarted: true,
     roomId: roomId,
     isFirstPlayer: false,
   };
 
+  let startGamemsg: StartGameReturnMessage = {
+    opponentName: username,
+  };
+
   socket.emit(socketTerms.joinedRoom, msg);
-  socket.to(roomId).emit(socketTerms.startGame);
+  socket.to(roomId).emit(socketTerms.startGame, startGamemsg);
 };
 
-const joinRoom = async (socket: Socket, roomId: string, type: string) => {
+const joinRoom = async (
+  socket: Socket,
+  username: string,
+  roomId: string,
+  type: string
+) => {
   console.log("Joining/Creating room ", roomId, type);
+
   let board_preference = Number.parseInt(roomId.split("_")[0]);
+
   if (rooms.has(roomId) === false) {
     let room: Room = {
       id: roomId,
@@ -102,7 +150,7 @@ const joinRoom = async (socket: Socket, roomId: string, type: string) => {
     console.log("Room created successfully..!", room);
   }
 
-  joinRoomWithId(socket, roomId);
+  joinRoomWithId(socket, roomId, username);
 };
 
 const socketHandler = (req: any, res: any) => {
@@ -117,37 +165,35 @@ const socketHandler = (req: any, res: any) => {
   res.socket.server.io = io;
 
   io.on(socketTerms.connect, (socket) => {
-    socket.on(
-      socketTerms.createRoom,
-      (message: { roomId: string; type: string }) => {
-        console.log("Create room: ", message);
-        let { roomId, type } = message;
+    socket.on(socketTerms.createRoom, (message: CreateRoomMessage) => {
+      console.log("Create room: ", message);
+      let { username, boardPreference, type } = message;
 
-        if (type === publicState) {
-          let board_preference = Number.parseInt(roomId.split("_")[0]);
-          // finding a free room to join
-          for (let room of Array.from(rooms.values())) {
-            if (
-              room.boardPreference === board_preference &&
-              room.type === publicState &&
-              room.players.length < 2
-            ) {
-              joinRoomWithId(socket, room.id);
-              return;
-            }
+      if (type === publicState) {
+        // finding a free room to join
+        for (let room of Array.from(rooms.values())) {
+          if (
+            room.boardPreference === boardPreference &&
+            room.type === publicState &&
+            room.players.length < 2
+          ) {
+            joinRoomWithId(socket, room.id, username);
+            return;
           }
         }
-        //rooms not available or is a private type create new room
-        joinRoom(socket, roomId, type);
       }
-    );
-
-    socket.on(socketTerms.joinRoomWithId, (message: { roomId: string }) => {
-      joinRoomWithId(socket, message.roomId);
+      //rooms not available or is a private type create new room
+      let roomid = boardPreference + "_" + uuid_v4().slice(0, 5);
+      joinRoom(socket, username, roomid, type);
     });
 
-    socket.on(socketTerms.leaveRoom, (message: { roomId: string }) => {
-      leaveRoomWithId(socket, message.roomId);
+    socket.on(socketTerms.joinRoomWithId, (message: JoinRoomWithIdMessage) => {
+      let { roomId, username } = message;
+      joinRoomWithId(socket, roomId, username);
+    });
+
+    socket.on(socketTerms.leaveRoom, (message: LeaveRoomMessage) => {
+      leaveRoomWithId(socket, message.roomId, message.userId);
     });
 
     socket.on(socketTerms.getRooms, () => {
