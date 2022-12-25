@@ -51,7 +51,7 @@ const HomePage: NextPage = () => {
             {"desinged & developed"}
             <br />
             by{" "}
-            <a href="https://www.nishanths.me" target="_blank">
+            <a href="https://www.nishanths.me" target="_blank" rel="noreferrer">
               Nishanth S
             </a>
           </p>

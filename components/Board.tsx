@@ -26,12 +26,13 @@ const Board = () => {
   const socket = useRecoilValue(socketAtom);
 
   useEffect(() => {
-    if (gameState.roomid !== nullString) {
-      subscribeEvents();
-    }
+    subscribeEvents();
   }, []);
 
   const subscribeEvents = () => {
+    if (gameState.roomid !== nullString) {
+      return;
+    }
     OnGameUpdate(socket!, (boardArray: any) => {
       setGameState((old) => {
         return {

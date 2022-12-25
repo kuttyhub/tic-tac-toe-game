@@ -22,7 +22,7 @@ const WaitingScreen = () => {
   const handleLeave = async () => {
     setIsLeaving(true);
     try {
-      await leaveRoom(socket!, gameState.roomid);
+      await leaveRoom(socket!, gameState.roomid, userData.userId);
       router.replace("/");
     } catch (error) {
       console.error(error);
